@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,8 +22,6 @@ namespace FileArranger
     /// </summary>
     public partial class MainWindow : Window
     {
-        public bool fileDialogOpen = false;
-
         public MainWindow()
         {
             InitializeComponent();
@@ -30,35 +29,42 @@ namespace FileArranger
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (!fileDialogOpen)
-                ShowFileDialog();
+            GetDirectoryToExecute();
+
         }
 
-        private async void ShowFileDialog()
+        private DirectoryInventory GetDirectoryToExecute()
         {
-            fileDialogOpen = true;
+            (bool exist, string directory) choosenDirectory = ShowFileDialog();
 
-            await Task.Run(() =>
+            if (choosenDirectory.exist)
+                return new DirectoryInventory(choosenDirectory.directory);
+            else
+                throw new InvalidOperationException($"File Directory - { choosenDirectory.directory } does not exist");
+        }
+
+        private (bool, string) ShowFileDialog()
+        {
+            OpenFileDialog fileDialog = new OpenFileDialog();
+
+            fileDialog.ValidateNames = false;
+            fileDialog.CheckFileExists = false;
+            fileDialog.CheckPathExists = true;
+
+            fileDialog.FileName = "Folder Path";
+
+            bool choosed;
+            string fileDirectory = "";
+
+            if (fileDialog.ShowDialog() == true)
             {
-                OpenFileDialog fileDialog = new OpenFileDialog();
+                choosed = true;
+                fileDirectory = ValidataPath(fileDialog.FileName);
+            }
+            else
+                choosed = false;
 
-                fileDialog.ValidateNames = false;
-                fileDialog.CheckFileExists = false;
-                fileDialog.CheckPathExists = true;
-
-                fileDialog.FileName = "Folder Path";
-
-                if (fileDialog.ShowDialog() == true)
-                {
-                    fileDialogOpen = false;
-                    ShowBox(fileDialog.FileName);
-                }
-                else
-                {
-                    fileDialogOpen = false;
-                    MessageBox.Show("what");
-                }
-            });
+            return (choosed & Directory.Exists(fileDirectory), fileDirectory);
         }
 
         public void ShowBox(string path)
