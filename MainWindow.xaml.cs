@@ -22,28 +22,34 @@ namespace FileArranger
     /// </summary>
     public partial class MainWindow : Window
     {
+        private DirectoryInventory selectedDir;
+
         public MainWindow()
         {
+            DebugC.Initialize();
             InitializeComponent();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            GetDirectoryToExecute();
+            selectedDir = ShowFileDialog();
 
-        }
-
-        private DirectoryInventory GetDirectoryToExecute()
-        {
-            (bool exist, string directory) choosenDirectory = ShowFileDialog();
-
-            if (choosenDirectory.exist)
-                return new DirectoryInventory(choosenDirectory.directory);
+            if (selectedDir.vaild)
+                labelS.Content = selectedDir.path;
             else
-                throw new InvalidOperationException($"File Directory - { choosenDirectory.directory } does not exist");
+            {
+                labelS.Content = "none";
+                MessageBox.Show($"File Directory - { selectedDir.path } does not exist");
+            }
         }
 
-        private (bool, string) ShowFileDialog()
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            if (selectedDir.vaild)
+                selectedDir.ScanDirectory();
+        }
+
+        private DirectoryInventory ShowFileDialog()
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
 
@@ -54,17 +60,17 @@ namespace FileArranger
             fileDialog.FileName = "Folder Path";
 
             bool choosed;
-            string fileDirectory = "";
+            string filePath = "";
 
             if (fileDialog.ShowDialog() == true)
             {
                 choosed = true;
-                fileDirectory = ValidataPath(fileDialog.FileName);
+                filePath = ValidataPath(fileDialog.FileName);
             }
             else
                 choosed = false;
 
-            return (choosed & Directory.Exists(fileDirectory), fileDirectory);
+            return new DirectoryInventory(filePath, choosed);
         }
 
         public void ShowBox(string path)
@@ -89,5 +95,7 @@ namespace FileArranger
 
             return path;
         }
+
+       
     }
 }

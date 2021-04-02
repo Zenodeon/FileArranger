@@ -7,7 +7,10 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="29,29,0,0" VerticalAlignment="Top" Height="28" Width="124" Click="Button_Click"/>
+        <Button Content="Select Folder" HorizontalAlignment="Left" Margin="29,29,0,0" VerticalAlignment="Top" Height="28" Width="124" Click="Button_Click"/>
+        <Label Content="Selected Directory :" HorizontalAlignment="Left" Height="37" Margin="199,140,0,0" VerticalAlignment="Top" Width="112"/>
+        <Label Content="none" Name="labelS" HorizontalAlignment="Left" Height="246" Margin="311,140,0,0" VerticalAlignment="Top" Width="465"/>
+        <Button Content="Get Files" HorizontalAlignment="Left" Margin="29,62,0,0" VerticalAlignment="Top" Height="31" Width="124" Click="Button_Click_1"/>
 
     </Grid>
 </Window>
