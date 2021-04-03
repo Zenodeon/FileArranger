@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
+using Ookii.Dialogs.Wpf;
 
 namespace FileArranger
 {
@@ -26,7 +27,7 @@ namespace FileArranger
 
         public MainWindow()
         {
-            DebugC.Initialize();
+            DebugLog.Instantiate();
             InitializeComponent();
         }
 
@@ -34,13 +35,7 @@ namespace FileArranger
         {
             selectedDir = ShowFileDialog();
 
-            if (selectedDir.vaild)
-                labelS.Content = selectedDir.path;
-            else
-            {
-                labelS.Content = "none";
-                MessageBox.Show($"File Directory - { selectedDir.path } does not exist");
-            }
+            labelS.Content = selectedDir.path;
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -51,51 +46,16 @@ namespace FileArranger
 
         private DirectoryInventory ShowFileDialog()
         {
-            OpenFileDialog fileDialog = new OpenFileDialog();
-
-            fileDialog.ValidateNames = false;
-            fileDialog.CheckFileExists = false;
-            fileDialog.CheckPathExists = true;
-
-            fileDialog.FileName = "Folder Path";
+            VistaFolderBrowserDialog fileDialog = new VistaFolderBrowserDialog();
 
             bool choosed;
-            string filePath = "";
 
-            if (fileDialog.ShowDialog() == true)
-            {
+            if (fileDialog.ShowDialog().Value)
                 choosed = true;
-                filePath = ValidataPath(fileDialog.FileName);
-            }
             else
                 choosed = false;
 
-            return new DirectoryInventory(filePath, choosed);
-        }
-
-        public void ShowBox(string path)
-        {
-            path = ValidataPath(path);
-
-            MessageBox.Show(path);
-        }
-
-        private string ValidataPath(string path)
-        {
-            List<string> pathOrder = path.Split(@"\").ToList();
-
-            string fileName = pathOrder[pathOrder.Count - 1];
-
-            if (fileName.Contains('.') | fileName == "Folder Path")
-                path = path.Substring(0, path.Length - (fileName.Length + 1));
-
-            //string texts = "";
-            //foreach (string text in pathOrder)
-            //    texts += "|" + text + "| ";
-
-            return path;
-        }
-
-       
+            return new DirectoryInventory(fileDialog.SelectedPath, choosed);
+        }       
     }
 }

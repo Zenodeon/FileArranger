@@ -13,22 +13,28 @@ namespace FileArranger
 
         public bool vaild { get; private set; }
 
+        public string[] folders;
         public string[] files;
 
-        public DirectoryInventory(string directoryPath, bool vaildDirectory)
+        public DirectoryInventory(string directoryPath, bool vaild)
         {
             path = directoryPath;
-            vaild = vaildDirectory & Directory.Exists(directoryPath);
+            this.vaild = vaild;
         }
 
         public string[] ScanDirectory()
         {
+            folders = Directory.GetDirectories(path);
             files = Directory.GetFiles(path);
 
-            foreach(string path in files)
+            foreach (string folder in folders)
             {
-                //Debug.WriteLine(path);
-                DebugC.WriteLine(path);
+                DebugLog.Write(folder);
+            }
+
+            foreach (string file in files)
+            {
+                DebugLog.Write(file);
             }
 
             return files;
