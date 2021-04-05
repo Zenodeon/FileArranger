@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -15,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
 using Ookii.Dialogs.Wpf;
+using FileArranger.DebugLogger;
 
 namespace FileArranger
 {
@@ -27,8 +29,13 @@ namespace FileArranger
 
         public MainWindow()
         {
-            DebugLog.Instantiate();
             InitializeComponent();
+            DLog.Instantiate();
+        }
+
+        private void OnClosingWindow(object sender, CancelEventArgs e)
+        {
+            DLog.Close();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

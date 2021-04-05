@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
+using FileArranger.DebugLogger;
 
 namespace FileArranger
 {
@@ -29,12 +30,12 @@ namespace FileArranger
 
             foreach (string folder in folders)
             {
-                DebugLog.Write(folder);
+                DLog.Log(folder);
             }
 
             foreach (string file in files)
             {
-                DebugLog.Write(file);
+                DLog.Log(file);
             }
 
             return files;
