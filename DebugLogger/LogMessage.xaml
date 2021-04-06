@@ -5,10 +5,11 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:FileArranger.DebugLogger"
       mc:Ignorable="d"
-      Title="LogMessage" Height="80" Width="700"
+      Title="LogMessage" Height="40" Width="700"
       Background="#2d2d30">
 
     <Grid>
-        <Label Name="LogBox" Height="auto" Margin="10,10,10,10"  Width="auto" Foreground="White" FontSize="20"/>
+        <Label Content="0" Name="Index" Height="auto" Margin="5,5,0,5" HorizontalAlignment="Left" Foreground="White" FontSize="13"/>
+        <Label Content="test" Name="LogBox" Height="auto" Margin="40,5,10,5"  Width="auto" Foreground="White" FontSize="13"/>
     </Grid>
 </Page>

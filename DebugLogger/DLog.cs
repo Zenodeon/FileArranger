@@ -10,18 +10,22 @@ namespace FileArranger.DebugLogger
 
         public static void Instantiate()
         {
-            logWindow = new LoggerWindow();
+            if (logWindow == null)
+                logWindow = new LoggerWindow();
+
             logWindow.Show();
         }
 
         public static void Close()
         {
-            logWindow.Close();
+            if (logWindow != null)
+                logWindow.Close();
         }
 
         public static void Log(string log)
         {
-            logWindow.NewLog(log);
+            if (logWindow != null)
+                logWindow.NewLog(log);
         }
     }
 }

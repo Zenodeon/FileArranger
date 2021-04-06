@@ -23,9 +23,10 @@ namespace FileArranger.DebugLogger
             InitializeComponent();
         }
 
-        public LogMessage(string log)
+        public LogMessage(int index, string log)
         {
             InitializeComponent();
+            Index.Content = index;
             LogBox.Content = log;
         }
     }

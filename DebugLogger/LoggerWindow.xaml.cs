@@ -17,6 +17,8 @@ namespace FileArranger.DebugLogger
     /// </summary>
     public partial class LoggerWindow : Window
     {
+        private int logCount = 0;
+
         public LoggerWindow()
         {
             InitializeComponent();
@@ -25,6 +27,7 @@ namespace FileArranger.DebugLogger
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             LogList.Items.Clear();
+            logCount = 0;
         }
 
         public void NewLog(string log)
@@ -32,7 +35,7 @@ namespace FileArranger.DebugLogger
             Frame frame = new Frame();
             frame.Width = Width;
 
-            LogMessage message = new LogMessage(log);
+            LogMessage message = new LogMessage(logCount++, log);
             frame.Content = message;
 
             LogList.Items.Add(frame);

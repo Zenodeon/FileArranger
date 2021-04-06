@@ -25,7 +25,7 @@ namespace FileArranger
     /// </summary>
     public partial class MainWindow : Window
     {
-        private DirectoryInventory selectedDir;
+        private DirectoryTree selectedDir;
 
         public MainWindow()
         {
@@ -42,16 +42,16 @@ namespace FileArranger
         {
             selectedDir = ShowFileDialog();
 
-            labelS.Content = selectedDir.path;
+            labelS.Content = selectedDir.directoryPath;
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             if (selectedDir.vaild)
-                selectedDir.ScanDirectory();
+                selectedDir.ScanDirectory(true);
         }
 
-        private DirectoryInventory ShowFileDialog()
+        private DirectoryTree ShowFileDialog()
         {
             VistaFolderBrowserDialog fileDialog = new VistaFolderBrowserDialog();
 
@@ -62,7 +62,7 @@ namespace FileArranger
             else
                 choosed = false;
 
-            return new DirectoryInventory(fileDialog.SelectedPath, choosed);
+            return new DirectoryTree(fileDialog.SelectedPath, choosed);
         }       
     }
 }
