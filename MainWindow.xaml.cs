@@ -27,10 +27,14 @@ namespace FileArranger
     {
         private DirectoryTree selectedDir;
 
+        private Progress<ScanProgressData> scanProgress = new Progress<ScanProgressData>();
+
         public MainWindow()
         {
             InitializeComponent();
             DLog.Instantiate();
+
+            scanProgress.ProgressChanged += UpdateScanDetails;
         }
 
         private void OnClosingWindow(object sender, CancelEventArgs e)
@@ -38,17 +42,23 @@ namespace FileArranger
             DLog.Close();
         }
 
+        private void UpdateScanDetails(object sender, ScanProgressData e)
+        {
+            DirCount.Content = "Directory Count : " + e.directoriesCount;
+            FileCount.Content = "File Count : " + e.fileCount;
+        }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             selectedDir = ShowFileDialog();
 
-            labelS.Content = selectedDir.directoryPath;
+            DLog.Log("Selected Directory : " + selectedDir.directoryPath);
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             if (selectedDir.vaild)
-                selectedDir.ScanDirectory(true);
+                selectedDir.ScanDirectory(true, scanProgress);
         }
 
         private DirectoryTree ShowFileDialog()

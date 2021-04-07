@@ -17,7 +17,7 @@ namespace FileArranger
 
         public List<DirectoryTree> subDirectories;
 
-        public string[] files;
+        public List<string> files;
 
         public DirectoryTree(string directoryPath, bool vaild = true)
         {
@@ -25,39 +25,44 @@ namespace FileArranger
             this.vaild = vaild;
         }
 
-        public async void ScanDirectory(bool scanSubDirectories = false)
+        public async void ScanDirectory(bool scanSubDirectories, IProgress<ScanProgressData> progress = null, ScanProgressData scanData = null)
         {
             await Task.Run(() =>
             {
+                if (scanData == null)
+                    scanData = new ScanProgressData();
+
+                files = Directory.GetFiles(directoryPath).ToList();
+                scanData.fileCount += files.Count;
+
                 subDirectories = GetDirectories();
-                files = Directory.GetFiles(directoryPath);
-            });
+                scanData.directoriesCount += subDirectories.Count;
 
-            foreach (DirectoryTree directory in subDirectories)
-            {
-                DLog.Log(directory.directoryPath);
+                foreach (DirectoryTree directory in subDirectories)
+                    directory.ScanDirectory(scanSubDirectories, null, scanData);
 
-                directory.ScanDirectory(scanSubDirectories);
-            }
 
-            foreach (string file in files)
-            {
-                DLog.Log(file);
-
-                FileInfo info = new FileInfo(file);
-
-                if (info.Extension != ".json")
+                foreach (string file in files)
                 {
-                    MediaFile mFile = new MediaFile()
-                    {
-                        filePath = file,
-                        title = info.Name.Split('.')[0]
-                    };
+                    FileInfo info = new FileInfo(file);
 
-                    mFile.SaveCache();
+                    if (info.Extension != ".json")
+                    {
+                        MediaFile mFile = new MediaFile()
+                        {
+                            filePath = file,
+                            title = info.Name.Split('.')[0]
+                        };
+
+                        mFile.SaveCache();
+                    }
                 }
-            }
+
+                if (progress != null)
+                    progress.Report(scanData);
+            });
         }
+
 
         private List<DirectoryTree> GetDirectories()
         {
