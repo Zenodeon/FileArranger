@@ -9,8 +9,10 @@ namespace FileArranger
 {
     public class MediaFile : IMediaInfo
     {
-        public string filePath { get; set; }
-        public string title { get; set; }
+        public FileInfo fileInfo { get; set; }
+        public string title { get; }
+        public string extention { get; }
+
 
         private string tempCacheLocation = @"D:\TestSiteDump\";
 

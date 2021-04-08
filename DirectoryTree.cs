@@ -46,11 +46,7 @@ namespace FileArranger
 
                     if (info.Extension != ".json")
                     {
-                        MediaFile mFile = new MediaFile()
-                        {
-                            filePath = file,
-                            title = info.Name.Split('.')[0]
-                        };
+                        MediaFile mFile = new MediaFile() { fileInfo = info };
 
                         mFile.SaveCache();
                     }
