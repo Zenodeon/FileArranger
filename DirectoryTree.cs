@@ -25,12 +25,11 @@ namespace FileArranger
             this.vaild = vaild;
         }
 
-        public async void ScanDirectory(bool scanSubDirectories, IProgress<ScanProgressData> progress = null, ScanProgressData scanData = null)
+        public async void ScanDirectory(bool scanSubDirectories, IProgress<ScanProgressData> progress)
         {
             await Task.Run(() =>
             {
-                if (scanData == null)
-                    scanData = new ScanProgressData();
+                ScanProgressData scanData = new ScanProgressData();
 
                 files = Directory.GetFiles(directoryPath).ToList();
                 scanData.fileCount += files.Count;
@@ -39,8 +38,7 @@ namespace FileArranger
                 scanData.directoriesCount += subDirectories.Count;
 
                 foreach (DirectoryTree directory in subDirectories)
-                    directory.ScanDirectory(scanSubDirectories, null, scanData);
-
+                    directory.ScanDirectory(scanSubDirectories, progress);
 
                 foreach (string file in files)
                 {
@@ -58,8 +56,7 @@ namespace FileArranger
                     }
                 }
 
-                if (progress != null)
-                    progress.Report(scanData);
+                progress.Report(scanData);
             });
         }
 

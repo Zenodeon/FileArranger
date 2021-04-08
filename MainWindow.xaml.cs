@@ -28,6 +28,7 @@ namespace FileArranger
         private DirectoryTree selectedDir;
 
         private Progress<ScanProgressData> scanProgress = new Progress<ScanProgressData>();
+        private ScanProgressData scanProgressData = new ScanProgressData();
 
         public MainWindow()
         {
@@ -44,24 +45,30 @@ namespace FileArranger
 
         private void UpdateScanDetails(object sender, ScanProgressData e)
         {
-            DirCount.Content = "Directory Count : " + e.directoriesCount;
-            FileCount.Content = "File Count : " + e.fileCount;
+            scanProgressData += e;
+
+            DirCount.Content = "Directory Count : " + scanProgressData.directoriesCount;
+            FileCount.Content = "File Count : " + scanProgressData.fileCount;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ChooseFolder(object sender, RoutedEventArgs e)
         {
-            selectedDir = ShowFileDialog();
+            selectedDir = ShowFolderDialog();
 
             DLog.Log("Selected Directory : " + selectedDir.directoryPath);
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void ScanDirectory(object sender, RoutedEventArgs e)
         {
             if (selectedDir.vaild)
+            {
+                scanProgressData = new ScanProgressData();
+
                 selectedDir.ScanDirectory(true, scanProgress);
+            }
         }
 
-        private DirectoryTree ShowFileDialog()
+        private DirectoryTree ShowFolderDialog()
         {
             VistaFolderBrowserDialog fileDialog = new VistaFolderBrowserDialog();
 
