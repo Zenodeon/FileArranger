@@ -45,17 +45,12 @@ namespace FileArranger
                     FileInfo info = new FileInfo(file);
 
                     if (info.Extension != ".json")
-                    {
-                        MediaFile mFile = new MediaFile() { fileInfo = info };
-
-                        mFile.SaveCache();
-                    }
+                        new MediaFile(info).SaveCache(); ;
                 }
 
                 progress.Report(scanData);
             });
         }
-
 
         private List<DirectoryTree> GetDirectories()
         {
