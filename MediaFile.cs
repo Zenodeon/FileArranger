@@ -2,59 +2,29 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using System.Text.Json;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 
 namespace FileArranger
 {
     public class MediaFile
     {
-        private FileInfo fileInfo { get; set; }
+        public MediaInfo mediaInfo { get; set; }
 
-        public string title { get { return fileInfo.Name.Split('.')[0]; } }
-        public string extention { get { return fileInfo.Extension.Split('.')[1]; } }
-
-        public string metaDataPath 
-        { get 
-            {
-                string jsonPath1 = fileInfo.FullName + ".json";
-                string jsonPath2 = fileInfo.FullName.Split('.')[0] + ".json";
-                string returnPath = "";
-
-                if (File.Exists(jsonPath1))
-                    returnPath = jsonPath1;
-                else if(File.Exists(jsonPath2))
-                    returnPath = jsonPath2;
- 
-                return returnPath;
-            } 
-        }
-
-        public string datedCreated
+        public MediaFile()
         {
-            get
-            {
-                if (metaDataPath == "")
-                    return "";
-
-                 JsonSerializer.Serialize(File.ReadAllText(metaDataPath));
-
-                return "";
-            }
         }
-
-        private string tempCacheLocation = @"D:\TestSiteDump\";
 
         public MediaFile(FileInfo info)
         {
-            fileInfo = info;
+            mediaInfo = new MediaInfo(info);
         }
 
-        public void SaveCache()
+        public MediaFile(string cachePath)
         {
-            string cache = JsonSerializer.Serialize(this);
-
-            File.WriteAllText(tempCacheLocation + title, cache);
+            // mediaInfo = new MediaInfo(cachePath);
+            mediaInfo = JsonConvert.DeserializeObject<MediaInfo>(cachePath);
         }
     }
 }

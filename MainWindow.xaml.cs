@@ -68,6 +68,32 @@ namespace FileArranger
             }
         }
 
+        private void LoadCache(object sender, RoutedEventArgs e)
+        {
+            scanProgressData = new ScanProgressData();
+
+            LoadCache(MediaInfo.tempCacheLocation[0] , scanProgress);
+        }
+
+        public async void LoadCache(string cacheLocation, IProgress<ScanProgressData> progress)
+        {
+            await Task.Run(() =>
+            {
+                ScanProgressData scanData = new ScanProgressData();
+
+                var files = Directory.GetFiles(cacheLocation).ToList();
+                scanData.fileCount += files.Count;
+
+                foreach (string file in files)
+                {
+                    DLog.Log("Cache : " + file);
+                    new MediaFile(file).mediaInfo.SaveCache(1);
+                }
+
+                progress.Report(scanData);
+            });
+        }
+
         private DirectoryTree ShowFolderDialog()
         {
             VistaFolderBrowserDialog fileDialog = new VistaFolderBrowserDialog();

@@ -45,7 +45,7 @@ namespace FileArranger
                     FileInfo info = new FileInfo(file);
 
                     if (info.Extension != ".json")
-                        new MediaFile(info).SaveCache(); ;
+                        new MediaFile(info).mediaInfo.SaveCache();
                 }
 
                 progress.Report(scanData);
