@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using FileArranger.DebugLogger;
+using DebugLogger.Wpf;
 
 namespace FileArranger
 {
@@ -45,8 +45,10 @@ namespace FileArranger
                     FileInfo info = new FileInfo(file);
 
                     if (info.Extension != ".json")
-                        new MediaFile(info).mediaInfo.SaveCache();
+                        new MediaFile(info).mediaInfo.MakeCache();
                 }
+
+                MediaInfoCacheHandler.SaveCache();
 
                 progress.Report(scanData);
             });

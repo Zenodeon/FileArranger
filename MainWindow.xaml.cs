@@ -16,7 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
 using Ookii.Dialogs.Wpf;
-using FileArranger.DebugLogger;
+using DebugLogger.Wpf;
 
 namespace FileArranger
 {
@@ -72,7 +72,7 @@ namespace FileArranger
         {
             scanProgressData = new ScanProgressData();
 
-            LoadCache(MediaInfo.tempCacheLocation[0] , scanProgress);
+            LoadCache(MediaInfoCacheHandler.tempCacheLocation[0] , scanProgress);
         }
 
         public async void LoadCache(string cacheLocation, IProgress<ScanProgressData> progress)
@@ -87,7 +87,7 @@ namespace FileArranger
                 foreach (string file in files)
                 {
                     DLog.Log("Cache : " + file);
-                    new MediaFile(file).mediaInfo.SaveCache(1);
+                    new MediaFile(file).mediaInfo.MakeCache(1);
                 }
 
                 progress.Report(scanData);

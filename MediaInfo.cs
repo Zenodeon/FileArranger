@@ -10,7 +10,6 @@ namespace FileArranger
     public class MediaInfo
     {
         private FileInfo fileInfo { get; set; }
-        private JObject cache { get; set; }
 
         public string filePath { get; set; }
         public string metaDataPath { get; set; }
@@ -22,73 +21,69 @@ namespace FileArranger
 
         public string datedCreated { get; set; }
 
-
-        //Temp
-        public static string[] tempCacheLocation = { @"D:\TestSiteDump\dump1\", @"D:\TestSiteDump\dump2\", @"D:\TestSiteDump\dump3\"};
-
         public MediaInfo(FileInfo fileInfo)
         {
             this.fileInfo = fileInfo;
 
-            LoadInfoFromFileInfo();
+            LoadInfoFromFileInfo(fileInfo);
         }
 
-        public MediaInfo(string cachePath)
+        public MediaInfo(JObject infoCache)
         {
-            cache = JObject.Parse(File.ReadAllText(cachePath));
+            //cache = JObject.Parse(File.ReadAllText(cachePath));
 
-            LoadInfoFromCache();
+            LoadInfoFromCache(infoCache);
         }
 
-        private void LoadInfoFromFileInfo()
+        private void LoadInfoFromFileInfo(FileInfo info)
         {
-            if (fileInfo == null)
+            if (info == null)
                 return;
 
             //FileName
-            title = fileInfo.Name.Split('.')[0];
+            title = info.Name.Split('.')[0];
 
             //FileExtention
-            extention = fileInfo.Extension.Split('.')[1];
+            extention = info.Extension.Split('.')[1];
 
             //FilePath
-            filePath = fileInfo.FullName;
+            filePath = info.FullName;
 
             //GooglePhoto's Json File
-            metaDataPath = GetMediaMetaDataPath();
+            metaDataPath = GetMediaMetaDataPath(info);
 
             datedCreated = "";
         }
-        private void LoadInfoFromCache()
+        private void LoadInfoFromCache(JObject infoCache)
         {
-            if (cache == null)
+            if (infoCache == null)
                 return;
 
             //FileName
-            title = cache["title"].ToString();
+            title = infoCache["title"].ToString();
 
             //FileExtention
-            extention = cache["extention"].ToString();
+            extention = infoCache["extention"].ToString();
 
             //FilePath
-            filePath = cache["filePath"].ToString();
+            filePath = infoCache["filePath"].ToString();
 
             //GooglePhoto's Json File
-            metaDataPath = cache["metaDataPath"].ToString();
+            metaDataPath = infoCache["metaDataPath"].ToString();
         }
 
-        public void SaveCache(int dump = 0)
+        public void MakeCache(int dump = 0)
         {
-            JObject cache = JObject.Parse(JsonConvert.SerializeObject(this));
+            JObject info = JObject.Parse(JsonConvert.SerializeObject(this));
 
-            File.WriteAllText(tempCacheLocation[dump] + title, cache.ToString());
+            MediaInfoCacheHandler.AddMediaInfo(info);
         }
 
         //GooglePhoto's Json File
-        private string GetMediaMetaDataPath()
+        private string GetMediaMetaDataPath(FileInfo info)
         {
-            string jsonPath1 = fileInfo.FullName + ".json";
-            string jsonPath2 = fileInfo.FullName.Split('.')[0] + ".json";
+            string jsonPath1 = info.FullName + ".json";
+            string jsonPath2 = info.FullName.Split('.')[0] + ".json";
             string returnPath = "";
 
             if (File.Exists(jsonPath1))
@@ -98,6 +93,5 @@ namespace FileArranger
 
             return returnPath;
         }
-
     }
 }
