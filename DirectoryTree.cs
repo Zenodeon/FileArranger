@@ -6,6 +6,8 @@ using System.Text;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using DebugLogger.Wpf;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace FileArranger
 {
@@ -25,12 +27,12 @@ namespace FileArranger
             this.vaild = vaild;
         }
 
-        public async void ScanDirectory(bool scanSubDirectories, IProgress<ScanProgressData> progress)
+        public async void ScanDirectory(bool scanSubDirectories, IProgress<ScanProgressData> progress, MediaInfoCacheHandler cacheHandler, bool startDirectory = false)
         {
+            ScanProgressData scanData = new ScanProgressData();
+
             await Task.Run(() =>
             {
-                ScanProgressData scanData = new ScanProgressData();
-
                 files = Directory.GetFiles(directoryPath).ToList();
                 scanData.fileCount += files.Count;
 
@@ -38,20 +40,25 @@ namespace FileArranger
                 scanData.directoriesCount += subDirectories.Count;
 
                 foreach (DirectoryTree directory in subDirectories)
-                    directory.ScanDirectory(scanSubDirectories, progress);
+                    directory.ScanDirectory(scanSubDirectories, progress, cacheHandler);
 
                 foreach (string file in files)
                 {
                     FileInfo info = new FileInfo(file);
 
                     if (info.Extension != ".json")
-                        new MediaFile(info).mediaInfo.MakeCache();
+                        cacheHandler.AddMediaInfo(new MediaFile(info).mediaInfo.MakeCache());
                 }
-
-                MediaInfoCacheHandler.SaveCache();
 
                 progress.Report(scanData);
             });
+
+            if (startDirectory)
+            {
+                cacheHandler.SaveCache();
+                //scanData.scanDone = true;
+                //progress.Report(scanData);
+            }
         }
 
         private List<DirectoryTree> GetDirectories()

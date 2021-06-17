@@ -72,11 +72,9 @@ namespace FileArranger
             metaDataPath = infoCache["metaDataPath"].ToString();
         }
 
-        public void MakeCache(int dump = 0)
+        public JObject MakeCache()
         {
-            JObject info = JObject.Parse(JsonConvert.SerializeObject(this));
-
-            MediaInfoCacheHandler.AddMediaInfo(info);
+            return JObject.Parse(JsonConvert.SerializeObject(this));
         }
 
         //GooglePhoto's Json File

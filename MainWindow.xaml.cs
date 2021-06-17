@@ -17,6 +17,8 @@ using System.Windows.Shapes;
 using Microsoft.Win32;
 using Ookii.Dialogs.Wpf;
 using DebugLogger.Wpf;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace FileArranger
 {
@@ -29,6 +31,8 @@ namespace FileArranger
 
         private Progress<ScanProgressData> scanProgress = new Progress<ScanProgressData>();
         private ScanProgressData scanProgressData = new ScanProgressData();
+
+        private MediaInfoCacheHandler cacheHandler = new MediaInfoCacheHandler();
 
         public MainWindow()
         {
@@ -49,6 +53,9 @@ namespace FileArranger
 
             DirCount.Content = "Directory Count : " + scanProgressData.directoriesCount;
             FileCount.Content = "File Count : " + scanProgressData.fileCount;
+
+            if (e.scanDone)
+                cacheHandler.SaveCache();
         }
 
         private void ChooseFolder(object sender, RoutedEventArgs e)
@@ -64,7 +71,7 @@ namespace FileArranger
             {
                 scanProgressData = new ScanProgressData();
 
-                selectedDir.ScanDirectory(true, scanProgress);
+                selectedDir.ScanDirectory(true, scanProgress,cacheHandler, true);
             }
         }
 
@@ -87,7 +94,7 @@ namespace FileArranger
                 foreach (string file in files)
                 {
                     DLog.Log("Cache : " + file);
-                    new MediaFile(file).mediaInfo.MakeCache(1);
+                    new MediaFile(file).mediaInfo.MakeCache();
                 }
 
                 progress.Report(scanData);
