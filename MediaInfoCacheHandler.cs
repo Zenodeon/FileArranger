@@ -8,47 +8,30 @@ using DebugLogger.Wpf;
 
 namespace FileArranger
 {
-    public class MediaInfoCacheHandler
+    public static class MediaInfoCacheHandler
     {
         //Temp
         public static string[] tempCacheLocation = { @"D:\TestSiteDump\dump1\", @"D:\TestSiteDump\dump2\", @"D:\TestSiteDump\dump3\" };
 
-        private List<JObject> mediaInfoCache = new List<JObject>();
+        private static JArray mediaInfoCache = new JArray();
 
-        private JArray test = new JArray();
-
-        public void AddMediaInfo(JObject mediaInfo)
+        public static void AddMediaInfo(JObject mediaInfo)
         {
-            //mediaInfoCache.Add(mediaInfo);
-
-            test.Add(mediaInfo);
             DLog.Log("file+1");
-            //File.WriteAllText(tempCacheLocation[1] + "cache" + test.Count, mediaInfo.ToString());
+
+            mediaInfoCache.Add(mediaInfo);
         }
 
-        public void AddMediaInfo(JArray mediaInfo)
+        public static void ClearMemoryCache()
         {
-            //mediaInfoCache.Add(mediaInfo);
-
-            //test.Add(mediaInfo);
-
-            //foreach (JToken j in mediaInfo)
-          //  {
-               // test.Add(j);
-              //  DLog.Log("file+1");
-            //}
-
-            DLog.Log("file+1");
-            //File.WriteAllText(tempCacheLocation[1] + "cache" + test.Count, mediaInfo.ToString());
+            mediaInfoCache.Clear();
         }
 
-        public void SaveCache()
+        public static void SaveCache()
         {
-            //JObject cache = JObject.Parse(JsonConvert.SerializeObject(mediaInfoCache));
-            DLog.Log("saving count : " + test.Count);
-            //DLog.Log("saving count : " + mediaInfoCache.Count);
+            DLog.Log("saving count : " + mediaInfoCache.Count);
 
-            //File.WriteAllText(tempCacheLocation[dump] + "cache", test.Count + "");
+            File.WriteAllText(tempCacheLocation[0] + "cache", mediaInfoCache.ToString());
         }
     }
 }

@@ -17,8 +17,6 @@ using System.Windows.Shapes;
 using Microsoft.Win32;
 using Ookii.Dialogs.Wpf;
 using DebugLogger.Wpf;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace FileArranger
 {
@@ -32,7 +30,7 @@ namespace FileArranger
         private Progress<ScanProgressData> scanProgress = new Progress<ScanProgressData>();
         private ScanProgressData scanProgressData = new ScanProgressData();
 
-        private MediaInfoCacheHandler cacheHandler = new MediaInfoCacheHandler();
+        //private MediaInfoCacheHandler cacheHandler = new MediaInfoCacheHandler();
 
         public MainWindow()
         {
@@ -55,23 +53,27 @@ namespace FileArranger
             FileCount.Content = "File Count : " + scanProgressData.fileCount;
 
             if (e.scanDone)
-                cacheHandler.SaveCache();
+            {
+                DLog.Log("Scan Done");
+            }
         }
 
         private void ChooseFolder(object sender, RoutedEventArgs e)
         {
             selectedDir = ShowFolderDialog();
 
-            DLog.Log("Selected Directory : " + selectedDir.directoryPath);
+            //DLog.Log("Selected Directory : " + selectedDir.directoryPath);
         }
 
         private void ScanDirectory(object sender, RoutedEventArgs e)
         {
             if (selectedDir.vaild)
             {
-                scanProgressData = new ScanProgressData();
+                scanProgressData = new ScanProgressData();   
 
-                selectedDir.ScanDirectory(true, scanProgress,cacheHandler, true);
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                selectedDir.ScanDirectory(true, scanProgress, true);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             }
         }
 

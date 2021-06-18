@@ -6,8 +6,6 @@ using System.Text;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using DebugLogger.Wpf;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace FileArranger
 {
@@ -27,11 +25,14 @@ namespace FileArranger
             this.vaild = vaild;
         }
 
-        public async void ScanDirectory(bool scanSubDirectories, IProgress<ScanProgressData> progress, MediaInfoCacheHandler cacheHandler, bool startDirectory = false)
+        public async Task ScanDirectory(bool scanSubDirectories, IProgress<ScanProgressData> progress, bool startDirectory = false)
         {
             ScanProgressData scanData = new ScanProgressData();
 
-            await Task.Run(() =>
+            if (startDirectory)        
+                MediaInfoCacheHandler.ClearMemoryCache();
+
+            await Task.Run(async () =>
             {
                 files = Directory.GetFiles(directoryPath).ToList();
                 scanData.fileCount += files.Count;
@@ -40,24 +41,25 @@ namespace FileArranger
                 scanData.directoriesCount += subDirectories.Count;
 
                 foreach (DirectoryTree directory in subDirectories)
-                    directory.ScanDirectory(scanSubDirectories, progress, cacheHandler);
+                    await directory.ScanDirectory(scanSubDirectories, progress);
 
                 foreach (string file in files)
                 {
                     FileInfo info = new FileInfo(file);
 
                     if (info.Extension != ".json")
-                        cacheHandler.AddMediaInfo(new MediaFile(info).mediaInfo.MakeCache());
+                        MediaInfoCacheHandler.AddMediaInfo(new MediaFile(info).mediaInfo.MakeCache());
                 }
-
+              
                 progress.Report(scanData);
             });
 
             if (startDirectory)
             {
-                cacheHandler.SaveCache();
-                //scanData.scanDone = true;
-                //progress.Report(scanData);
+                MediaInfoCacheHandler.SaveCache();
+
+                scanData.scanDone = true;
+                progress.Report(scanData);
             }
         }
 
