@@ -16,9 +16,7 @@ namespace FileArranger
         private static JArray mediaInfoCache = new JArray();
 
         public static void AddMediaInfo(JObject mediaInfo)
-        {
-            DLog.Log("file+1");
-
+        {   
             mediaInfoCache.Add(mediaInfo);
         }
 
@@ -29,9 +27,11 @@ namespace FileArranger
 
         public static void SaveCache()
         {
+            /*
             DLog.Log("saving count : " + mediaInfoCache.Count);
 
             File.WriteAllText(tempCacheLocation[0] + "cache", mediaInfoCache.ToString());
+            */
         }
     }
 }

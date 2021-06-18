@@ -86,6 +86,7 @@ namespace FileArranger
 
         public async void LoadCache(string cacheLocation, IProgress<ScanProgressData> progress)
         {
+            /*
             await Task.Run(() =>
             {
                 ScanProgressData scanData = new ScanProgressData();
@@ -101,6 +102,7 @@ namespace FileArranger
 
                 progress.Report(scanData);
             });
+            */
         }
 
         private DirectoryTree ShowFolderDialog()
