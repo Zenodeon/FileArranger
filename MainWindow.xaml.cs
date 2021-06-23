@@ -15,7 +15,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
-using Ookii.Dialogs.Wpf;
 using DebugLogger.Wpf;
 
 namespace FileArranger
@@ -26,11 +25,10 @@ namespace FileArranger
     public partial class MainWindow : Window
     {
         private DirectoryTree selectedDir;
+        private DirectoryTree distinationDir;
 
         private Progress<ScanProgressData> scanProgress = new Progress<ScanProgressData>();
         private ScanProgressData scanProgressData = new ScanProgressData();
-
-        //private MediaInfoCacheHandler cacheHandler = new MediaInfoCacheHandler();
 
         public MainWindow()
         {
@@ -60,21 +58,22 @@ namespace FileArranger
 
         private void ChooseFolder(object sender, RoutedEventArgs e)
         {
-            selectedDir = ShowFolderDialog();
+            selectedDir = DirectoryAction.ShowFolderDialog();
 
-            //DLog.Log("Selected Directory : " + selectedDir.directoryPath);
+            DLog.Log("Selected Directory : " + selectedDir.directoryPath);
         }
 
         private void ScanDirectory(object sender, RoutedEventArgs e)
         {
-            if (selectedDir.vaild)
-            {
-                scanProgressData = new ScanProgressData();   
+            if (selectedDir != null)
+                if (selectedDir.vaild)
+                {
+                    scanProgressData = new ScanProgressData();
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                selectedDir.ScanDirectory(true, scanProgress, true);
+                    selectedDir.ScanDirectory(true, scanProgress, true);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            }
+                }
         }
 
         private void LoadCache(object sender, RoutedEventArgs e)
@@ -84,8 +83,10 @@ namespace FileArranger
             LoadCache(MediaInfoCacheHandler.tempCacheLocation[0] , scanProgress);
         }
 
-        public async void LoadCache(string cacheLocation, IProgress<ScanProgressData> progress)
+        public void LoadCache(string cacheLocation, IProgress<ScanProgressData> progress)
+        //public async void LoadCache(string cacheLocation, IProgress<ScanProgressData> progress)
         {
+            DLog.Log("Function Disabled Temporarily");
             /*
             await Task.Run(() =>
             {
@@ -105,18 +106,21 @@ namespace FileArranger
             */
         }
 
-        private DirectoryTree ShowFolderDialog()
+        private void SetDistination(object sender, RoutedEventArgs e)
         {
-            VistaFolderBrowserDialog fileDialog = new VistaFolderBrowserDialog();
+            distinationDir = DirectoryAction.ShowFolderDialog();
 
-            bool choosed;
+            DLog.Log("Distination Directory : " + distinationDir.directoryPath);
+        }
 
-            if (fileDialog.ShowDialog().Value)
-                choosed = true;
-            else
-                choosed = false;
+        private void CopyToDistination(object sender, RoutedEventArgs e)
+        {
+            selectedDir.subDirectories[0].subFiles[0].CopyFileTo(distinationDir);
+        }
 
-            return new DirectoryTree(fileDialog.SelectedPath, choosed);
-        }       
+        private void MoveToDistination(object sender, RoutedEventArgs e)
+        {
+
+        }    
     }
 }

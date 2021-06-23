@@ -15,9 +15,9 @@ namespace FileArranger
 
         public bool vaild { get; private set; }
 
-        public List<DirectoryTree> subDirectories;
+        public List<DirectoryTree> subDirectories = new List<DirectoryTree>();
 
-        public List<string> files;
+        public List<MediaFile> subFiles = new List<MediaFile>();
 
         public DirectoryTree(string directoryPath, bool vaild = true)
         {
@@ -34,21 +34,25 @@ namespace FileArranger
 
             await Task.Run(async () =>
             {
-                files = Directory.GetFiles(directoryPath).ToList();
-                scanData.fileCount += files.Count;
-
                 subDirectories = GetDirectories();
                 scanData.directoriesCount += subDirectories.Count;
 
                 foreach (DirectoryTree directory in subDirectories)
                     await directory.ScanDirectory(scanSubDirectories, progress);
 
-                foreach (string file in files)
+                List<string> filesLoc = Directory.GetFiles(directoryPath).ToList();
+                scanData.fileCount += filesLoc.Count;
+
+                foreach (string file in filesLoc)
                 {
                     FileInfo info = new FileInfo(file);
 
                     if (info.Extension != ".json")
-                        MediaInfoCacheHandler.AddMediaInfo(new MediaFile(info).mediaInfo.MakeCache());
+                    {
+                        MediaFile mediaFile = new MediaFile(info);
+                        subFiles.Add(mediaFile);
+                        MediaInfoCacheHandler.AddMediaInfo(mediaFile.mediaInfo.MakeCache());
+                    }
                 }
               
                 progress.Report(scanData);
