@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 
 namespace FileArranger
 {
-    public class MediaInfo
+    public class CFileInfo
     {
         private FileInfo fileInfo { get; set; }
 
@@ -21,14 +21,14 @@ namespace FileArranger
 
         public string datedCreated { get; set; }
 
-        public MediaInfo(FileInfo fileInfo)
+        public CFileInfo(FileInfo fileInfo)
         {
             this.fileInfo = fileInfo;
 
             LoadInfoFromFileInfo(fileInfo);
         }
 
-        public MediaInfo(JObject infoCache)
+        public CFileInfo(JObject infoCache)
         {
             //cache = JObject.Parse(File.ReadAllText(cachePath));
 
@@ -44,7 +44,7 @@ namespace FileArranger
             title = info.Name.Split('.')[0];
 
             //FileExtention
-            extention = info.Extension.Split('.')[1];
+            extention = info.Extension.Split('.')[1].ToLower();
 
             //FilePath
             filePath = info.FullName;

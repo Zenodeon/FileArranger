@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using Ookii.Dialogs.Wpf;
-
+using DebugLogger.Wpf;
 namespace FileArranger
 {
     static class DirectoryAction
@@ -22,13 +22,13 @@ namespace FileArranger
             return new DirectoryTree(fileDialog.SelectedPath, choosed);
         }
 
-        public static void CopyFileTo(this MediaFile file, DirectoryTree distinationDir)
+        public static void CopyFileTo(this CFile file, DirectoryTree distinationDir)
         {
             byte[] buffer = new byte[1024 * 1024]; // 1MB buffer
             bool cancelFlag = false;
 
             using (FileStream source = new FileStream(file.mediaInfo.filePath, FileMode.Open, FileAccess.Read))
-            {
+            {              
                 long fileLength = source.Length;
                 using (FileStream dest = new FileStream(distinationDir.directoryPath + "/" + file.mediaInfo.title + "." + file.mediaInfo.extention, FileMode.CreateNew, FileAccess.Write))
                 {

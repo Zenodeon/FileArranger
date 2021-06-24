@@ -80,7 +80,7 @@ namespace FileArranger
         {
             scanProgressData = new ScanProgressData();
 
-            LoadCache(MediaInfoCacheHandler.tempCacheLocation[0] , scanProgress);
+            LoadCache(CFileInfoCacheHandler.tempCacheLocation[0] , scanProgress);
         }
 
         public void LoadCache(string cacheLocation, IProgress<ScanProgressData> progress)

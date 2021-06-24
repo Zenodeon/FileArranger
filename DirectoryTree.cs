@@ -17,7 +17,7 @@ namespace FileArranger
 
         public List<DirectoryTree> subDirectories = new List<DirectoryTree>();
 
-        public List<MediaFile> subFiles = new List<MediaFile>();
+        public List<CFile> subFiles = new List<CFile>();
 
         public DirectoryTree(string directoryPath, bool vaild = true)
         {
@@ -29,8 +29,8 @@ namespace FileArranger
         {
             ScanProgressData scanData = new ScanProgressData();
 
-            if (startDirectory)        
-                MediaInfoCacheHandler.ClearMemoryCache();
+            if (startDirectory)
+                CFileInfoCacheHandler.ClearMemoryCache();
 
             await Task.Run(async () =>
             {
@@ -49,9 +49,9 @@ namespace FileArranger
 
                     if (info.Extension != ".json")
                     {
-                        MediaFile mediaFile = new MediaFile(info);
+                        CFile mediaFile = new CFile(info);
                         subFiles.Add(mediaFile);
-                        MediaInfoCacheHandler.AddMediaInfo(mediaFile.mediaInfo.MakeCache());
+                        CFileInfoCacheHandler.AddMediaInfo(mediaFile.mediaInfo.MakeCache());
                     }
                 }
               
@@ -60,7 +60,7 @@ namespace FileArranger
 
             if (startDirectory)
             {
-                MediaInfoCacheHandler.SaveCache();
+                CFileInfoCacheHandler.SaveCache();
 
                 scanData.scanDone = true;
                 progress.Report(scanData);

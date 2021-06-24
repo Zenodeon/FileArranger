@@ -8,7 +8,7 @@ using DebugLogger.Wpf;
 
 namespace FileArranger
 {
-    public static class MediaInfoCacheHandler
+    public static class CFileInfoCacheHandler
     {
         //Temp
         public static string[] tempCacheLocation = { @"D:\TestSiteDump\dump1\", @"D:\TestSiteDump\dump2\", @"D:\TestSiteDump\dump3\" };
