@@ -10,21 +10,27 @@ namespace FileArranger
 {
     public class CFile
     {
-        public CFileInfo mediaInfo { get; set; }
+        public CFileInfo info { get; set; }
 
         public CFile()
         {
         }
 
-        public CFile(FileInfo info)
+        public CFile(string path)
         {
-            mediaInfo = new CFileInfo(info);
+            info = new CFileInfo(new FileInfo(path));
         }
 
+        /*
         public CFile(string cachePath)
         {
             // mediaInfo = new MediaInfo(cachePath);
             mediaInfo = JsonConvert.DeserializeObject<CFileInfo>(cachePath);
+        }*/
+
+        public void CopyInfo(CFile file)
+        {
+            info.CopyInfo(file.info);
         }
     }
 }

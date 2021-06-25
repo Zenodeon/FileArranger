@@ -16,7 +16,7 @@ namespace FileArranger
 
 
         public string title { get; set; }
-        public string extention { get; set; }
+        public string extension { get; set; }
 
 
         public string datedCreated { get; set; }
@@ -44,7 +44,7 @@ namespace FileArranger
             title = info.Name.Split('.')[0];
 
             //FileExtention
-            extention = info.Extension.Split('.')[1].ToLower();
+            extension = info.Extension.Split('.')[1].ToLower();
 
             //FilePath
             filePath = info.FullName;
@@ -63,7 +63,7 @@ namespace FileArranger
             title = infoCache["title"].ToString();
 
             //FileExtention
-            extention = infoCache["extention"].ToString();
+            extension = infoCache["extension"].ToString();
 
             //FilePath
             filePath = infoCache["filePath"].ToString();
@@ -90,6 +90,11 @@ namespace FileArranger
                 returnPath = jsonPath2;
 
             return returnPath;
+        }
+
+        public void CopyInfo(CFileInfo info)
+        {
+            fileInfo.CreationTimeUtc = info.fileInfo.CreationTimeUtc;
         }
     }
 }

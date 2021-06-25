@@ -43,15 +43,14 @@ namespace FileArranger
                 List<string> filesLoc = Directory.GetFiles(directoryPath).ToList();
                 scanData.fileCount += filesLoc.Count;
 
-                foreach (string file in filesLoc)
+                foreach (string filePath in filesLoc)
                 {
-                    FileInfo info = new FileInfo(file);
+                    CFile file = new CFile(filePath);
 
-                    if (info.Extension != ".json")
+                    if (file.info.extension != "json")
                     {
-                        CFile mediaFile = new CFile(info);
-                        subFiles.Add(mediaFile);
-                        CFileInfoCacheHandler.AddMediaInfo(mediaFile.mediaInfo.MakeCache());
+                        subFiles.Add(file);
+                        CFileInfoCacheHandler.AddMediaInfo(file.info.MakeCache());
                     }
                 }
               

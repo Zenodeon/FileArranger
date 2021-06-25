@@ -7,7 +7,7 @@ namespace FileArranger
 {
     public class ImageFile : CFile
     {
-        public ImageFile(FileInfo info) : base(info)
+        public ImageFile(string path) : base(path)
         {
 
         }

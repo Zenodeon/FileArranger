@@ -22,15 +22,17 @@ namespace FileArranger
             return new DirectoryTree(fileDialog.SelectedPath, choosed);
         }
 
-        public static void CopyFileTo(this CFile file, DirectoryTree distinationDir)
+        public static CFile CopyFileTo(this CFile file, DirectoryTree distinationDir)
         {
             byte[] buffer = new byte[1024 * 1024]; // 1MB buffer
             bool cancelFlag = false;
 
-            using (FileStream source = new FileStream(file.mediaInfo.filePath, FileMode.Open, FileAccess.Read))
+            string fileTargetPath = distinationDir.directoryPath + "/" + file.info.title + "." + file.info.extension;
+
+            using (FileStream source = new FileStream(file.info.filePath, FileMode.Open, FileAccess.Read))
             {              
                 long fileLength = source.Length;
-                using (FileStream dest = new FileStream(distinationDir.directoryPath + "/" + file.mediaInfo.title + "." + file.mediaInfo.extention, FileMode.CreateNew, FileAccess.Write))
+                using (FileStream dest = new FileStream(fileTargetPath, FileMode.CreateNew, FileAccess.Write))
                 {
                     long totalBytes = 0;
                     int currentBlockSize = 0;
@@ -53,6 +55,12 @@ namespace FileArranger
                     }
                 }
             }
+
+            CFile createdFile = new CFile(fileTargetPath);
+
+            createdFile.CopyInfo(file);
+
+            return createdFile;
         }
 
         public static void MoveContentTo(DirectoryTree distinationDir)
