@@ -60,6 +60,8 @@ namespace FileArranger
 
             createdFile.CopyInfo(file);
 
+            DLog.Log("Created File : " + createdFile.info.filePath);
+
             return createdFile;
         }
 

@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Globalization;
+using DebugLogger.Wpf;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Windows.Media.Imaging;
 
 namespace FileArranger
 {
@@ -95,6 +98,33 @@ namespace FileArranger
         public void CopyInfo(CFileInfo info)
         {
             fileInfo.CreationTimeUtc = info.fileInfo.CreationTimeUtc;
+            /*
+            using (Stream fs = File.Open(filePath, FileMode.Open, FileAccess.ReadWrite))
+            {
+                BitmapDecoder decoder = BitmapDecoder.Create(fs, BitmapCreateOptions.None, BitmapCacheOption.Default);
+                BitmapFrame frame = decoder.Frames[0]; // the first frame with the metadata
+                BitmapMetadata metadata = frame.Metadata as BitmapMetadata;
+
+                if (metadata != null)
+                {
+                    //DLog.Log(metadata.DateTaken);
+
+                    BitmapMetadata clone = metadata.Clone();
+
+                    clone.DateTaken = new DateTime(2017, 2, 24, 23, 24, 0).ToString("d", CultureInfo.InvariantCulture);
+
+                    metadata = clone;
+
+                    //metadata.DateTaken = metadata.DateTaken;
+                    DLog.Log(metadata.DateTaken);
+                }
+
+                BitmapEncoder encoder3 = new BitmapEncoder();
+
+                encoder3.Frames.Add(BitmapFrame.Create(decoder.Frames[0],decoder.Frames[0].Thumbnail,metadata,decoder.Frames[0].ColorContexts));
+
+                fs.Close();
+            }*/
         }
     }
 }

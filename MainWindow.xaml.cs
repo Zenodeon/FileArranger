@@ -54,16 +54,14 @@ namespace FileArranger
             {
                 DLog.Log("Scan Done");
             }
-        }
-
-        private void ChooseFolder(object sender, RoutedEventArgs e)
-        {
-            selectedDir = DirectoryAction.ShowFolderDialog();
-
-            DLog.Log("Selected Directory : " + selectedDir.directoryPath);
-        }
+        }      
 
         private void ScanDirectory(object sender, RoutedEventArgs e)
+        {
+            ScanDirectory();
+        }
+
+        private void ScanDirectory()
         {
             if (selectedDir != null)
                 if (selectedDir.vaild)
@@ -106,6 +104,13 @@ namespace FileArranger
             */
         }
 
+        private void ChooseFolder(object sender, RoutedEventArgs e)
+        {
+            selectedDir = DirectoryAction.ShowFolderDialog();
+
+            DLog.Log("Selected Directory : " + selectedDir.directoryPath);
+        }
+
         private void SetDistination(object sender, RoutedEventArgs e)
         {
             distinationDir = DirectoryAction.ShowFolderDialog();
@@ -115,12 +120,25 @@ namespace FileArranger
 
         private void CopyToDistination(object sender, RoutedEventArgs e)
         {
-            selectedDir.subDirectories[0].subFiles[0].CopyFileTo(distinationDir);
+            selectedDir.subDirectories[5].subFiles[0].CopyFileTo(distinationDir);
         }
 
         private void MoveToDistination(object sender, RoutedEventArgs e)
         {
 
-        }    
+        }
+
+        private void TestSiteSetup(object sender, RoutedEventArgs e)
+        {
+            //Site
+            selectedDir = new DirectoryTree(@"D:\TestSite\Site1");
+            DLog.Log("Selected Directory : " + selectedDir.directoryPath);
+
+            //Dump
+            distinationDir = new DirectoryTree(@"D:\TestSite\TestSiteDump\MainDump"); 
+            DLog.Log("Distination Directory : " + distinationDir.directoryPath);
+
+            ScanDirectory();
+        }
     }
 }

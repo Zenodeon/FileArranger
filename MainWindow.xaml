@@ -17,5 +17,6 @@
         <Button Content="Set Destination" HorizontalAlignment="Left" Margin="29,197,0,0" VerticalAlignment="Top" Height="31" Width="124" Click="SetDistination"/>
         <Button Content="Copy" HorizontalAlignment="Left" Margin="29,304,0,0" VerticalAlignment="Top" Height="31" Width="124" Click="CopyToDistination"/>
         <Button Content="Move" HorizontalAlignment="Left" Margin="29,347,0,0" VerticalAlignment="Top" Height="31" Width="124" Click="MoveToDistination"/>
+        <Button Content="Test Site Setup" HorizontalAlignment="Left" Margin="615,28,0,0" VerticalAlignment="Top" Height="30" Width="124" Click="TestSiteSetup"/>
     </Grid>
 </Window>
