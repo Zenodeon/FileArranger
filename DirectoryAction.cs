@@ -4,6 +4,8 @@ using System.Text;
 using System.IO;
 using Ookii.Dialogs.Wpf;
 using DebugLogger.Wpf;
+using System.Threading.Tasks;
+
 namespace FileArranger
 {
     static class DirectoryAction
@@ -22,15 +24,26 @@ namespace FileArranger
             return new DirectoryTree(fileDialog.SelectedPath, choosed);
         }
 
-        public static CFile CopyFileTo(this CFile file, DirectoryTree distinationDir)
+        public static async Task TransferContentTo(this DirectoryTree dir, DirectoryTree distinationDir)
+        { 
+            foreach(CFile cFile in dir.subFiles)
+            {
+                CopyFileTo(cFile, distinationDir.directoryPath);
+            }
+
+            foreach (DirectoryTree subDir in dir.subDirectories)
+                await TransferContentTo(subDir, distinationDir);
+        }
+
+        public static CFile CopyFileTo(this CFile file, string distinationPath)
         {
             byte[] buffer = new byte[1024 * 1024]; // 1MB buffer
             bool cancelFlag = false;
 
-            string fileTargetPath = distinationDir.directoryPath + "/" + file.info.title + "." + file.info.extension;
+            string fileTargetPath = distinationPath + "/" + file.name;
 
             using (FileStream source = new FileStream(file.info.filePath, FileMode.Open, FileAccess.Read))
-            {              
+            {
                 long fileLength = source.Length;
                 using (FileStream dest = new FileStream(fileTargetPath, FileMode.CreateNew, FileAccess.Write))
                 {
@@ -63,6 +76,11 @@ namespace FileArranger
             DLog.Log("Created File : " + createdFile.info.filePath);
 
             return createdFile;
+        }
+
+        public static CFile CopyFileTo(this CFile file, DirectoryTree distinationDir)
+        {
+            return CopyFileTo(file, distinationDir.directoryPath);
         }
 
         public static void MoveContentTo(DirectoryTree distinationDir)

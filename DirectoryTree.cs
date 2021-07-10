@@ -32,13 +32,10 @@ namespace FileArranger
             if (startDirectory)
                 CFileInfoCacheHandler.ClearMemoryCache();
 
-            await Task.Run(async () =>
+            await Task.Run(() =>
             {
                 subDirectories = GetDirectories();
                 scanData.directoriesCount += subDirectories.Count;
-
-                foreach (DirectoryTree directory in subDirectories)
-                    await directory.ScanDirectory(scanSubDirectories, progress);
 
                 List<string> filesLoc = Directory.GetFiles(directoryPath).ToList();
                 scanData.fileCount += filesLoc.Count;
@@ -50,12 +47,17 @@ namespace FileArranger
                     if (file.info.extension != "json")
                     {
                         subFiles.Add(file);
-                        CFileInfoCacheHandler.AddMediaInfo(file.info.MakeCache());
+                        CFileInfoCacheHandler.AddMediaInfo(file.info.MakeCache());      
                     }
-                }
-              
-                progress.Report(scanData);
+                } 
             });
+
+            foreach (DirectoryTree directory in subDirectories)
+                await directory.ScanDirectory(scanSubDirectories, progress);
+
+            scanData.selectedFileCount += subFiles.Count;
+
+            progress.Report(scanData);
 
             if (startDirectory)
             {

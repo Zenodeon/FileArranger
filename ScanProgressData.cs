@@ -10,6 +10,7 @@ namespace FileArranger
     {
         public int directoriesCount { get; set; } = 0;
         public int fileCount { get; set; } = 0;
+        public int selectedFileCount { get; set; } = 0;
 
         public bool scanDone { get; set; } = false;
 
@@ -17,6 +18,7 @@ namespace FileArranger
         {
             a.directoriesCount += b.directoriesCount;
             a.fileCount += b.fileCount;
+            a.selectedFileCount += b.selectedFileCount;
 
             return a;
         }

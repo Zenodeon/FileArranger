@@ -49,6 +49,7 @@ namespace FileArranger
 
             DirCount.Content = "Directory Count : " + scanProgressData.directoriesCount;
             FileCount.Content = "File Count : " + scanProgressData.fileCount;
+            SelectedFileCount.Content = "Selected File Count : " + scanProgressData.selectedFileCount;
 
             if (e.scanDone)
             {
@@ -120,7 +121,7 @@ namespace FileArranger
 
         private void CopyToDistination(object sender, RoutedEventArgs e)
         {
-            selectedDir.subDirectories[5].subFiles[0].CopyFileTo(distinationDir);
+            selectedDir.TransferContentTo(distinationDir);
         }
 
         private void MoveToDistination(object sender, RoutedEventArgs e)

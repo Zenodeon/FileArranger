@@ -12,6 +12,8 @@ namespace FileArranger
     {
         public CFileInfo info { get; set; }
 
+        public string name { get { return info.title + "." + info.extension; } }
+
         public CFile()
         {
         }
