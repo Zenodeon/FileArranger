@@ -30,12 +30,17 @@ namespace FileArranger
         private Progress<ScanProgressData> scanProgress = new Progress<ScanProgressData>();
         private ScanProgressData scanProgressData = new ScanProgressData();
 
+        private Progress<ScanProgressData> transferProgress = new Progress<ScanProgressData>();
+        //private ScanProgressData scanProgressData = new ScanProgressData();
+
         public MainWindow()
         {
             InitializeComponent();
             DLog.Instantiate();
 
             scanProgress.ProgressChanged += UpdateScanDetails;
+
+            Bar1.Value = 50;
         }
 
         private void OnClosingWindow(object sender, CancelEventArgs e)
