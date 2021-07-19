@@ -12,7 +12,7 @@ namespace FileArranger
     {
         public CFileInfo info { get; set; }
 
-        public string name { get { return info.title + "." + info.extension; } }
+        public string title { get { return info.name + info.extension; } }
 
         public CFile()
         {

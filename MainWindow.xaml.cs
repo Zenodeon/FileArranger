@@ -30,17 +30,15 @@ namespace FileArranger
         private Progress<ScanProgressData> scanProgress = new Progress<ScanProgressData>();
         private ScanProgressData scanProgressData = new ScanProgressData();
 
-        private Progress<ScanProgressData> transferProgress = new Progress<ScanProgressData>();
-        //private ScanProgressData scanProgressData = new ScanProgressData();
+        private Progress<TransferProgressData> transferProgress = new Progress<TransferProgressData>();
 
         public MainWindow()
         {
             InitializeComponent();
             DLog.Instantiate();
 
-            scanProgress.ProgressChanged += UpdateScanDetails;
-
-            Bar1.Value = 50;
+            scanProgress.ProgressChanged += ShowScanDetails;
+            transferProgress.ProgressChanged += ShowTransferDetails;
         }
 
         private void OnClosingWindow(object sender, CancelEventArgs e)
@@ -48,7 +46,7 @@ namespace FileArranger
             DLog.Close();
         }
 
-        private void UpdateScanDetails(object sender, ScanProgressData e)
+        private void ShowScanDetails(object sender, ScanProgressData e)
         {
             scanProgressData += e;
 
@@ -60,7 +58,24 @@ namespace FileArranger
             {
                 DLog.Log("Scan Done");
             }
-        }      
+        }
+
+        private void ShowTransferDetails(object sender, TransferProgressData e)
+        {
+            switch (e.mode)
+            {
+                case ProgressMode.file:
+                    Bar1.Value = e.filePercentage;
+                    break;
+
+                case ProgressMode.transfer:
+                    Bar2.Value = e.transferPercentage;
+                    break;
+
+                default:
+                    break;
+            }
+        }
 
         private void ScanDirectory(object sender, RoutedEventArgs e)
         {
@@ -126,7 +141,7 @@ namespace FileArranger
 
         private void CopyToDistination(object sender, RoutedEventArgs e)
         {
-            selectedDir.TransferContentTo(distinationDir);
+            selectedDir.TransferContentTo(distinationDir, transferProgress);
         }
 
         private void MoveToDistination(object sender, RoutedEventArgs e)

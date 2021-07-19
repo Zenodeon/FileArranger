@@ -44,7 +44,7 @@ namespace FileArranger
                 {
                     CFile file = new CFile(filePath);
 
-                    if (file.info.extension != "json")
+                    if (file.info.extension != ".json")
                     {
                         subFiles.Add(file);
                         CFileInfoCacheHandler.AddMediaInfo(file.info.MakeCache());      

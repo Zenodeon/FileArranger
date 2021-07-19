@@ -18,7 +18,7 @@ namespace FileArranger
         public string metaDataPath { get; set; }
 
 
-        public string title { get; set; }
+        public string name { get; set; }
         public string extension { get; set; }
 
 
@@ -43,11 +43,11 @@ namespace FileArranger
             if (info == null)
                 return;
 
-            //FileName
-            title = info.Name.Split('.')[0];
-
             //FileExtention
-            extension = info.Extension.Split('.')[1].ToLower();
+            extension = info.Extension;
+
+            //FileName
+            name = info.Name.TrimEnd(extension.ToCharArray());
 
             //FilePath
             filePath = info.FullName;
@@ -63,7 +63,7 @@ namespace FileArranger
                 return;
 
             //FileName
-            title = infoCache["title"].ToString();
+            name = infoCache["name"].ToString();
 
             //FileExtention
             extension = infoCache["extension"].ToString();

@@ -24,27 +24,48 @@ namespace FileArranger
             return new DirectoryTree(fileDialog.SelectedPath, choosed);
         }
 
-        public static async Task TransferContentTo(this DirectoryTree dir, DirectoryTree distinationDir)
-        { 
-            foreach(CFile cFile in dir.subFiles)
+        public static async Task TransferContentTo(this DirectoryTree dir, DirectoryTree distinationDir, IProgress<TransferProgressData> progress)
+        {
+            TransferProgressData progressData = new TransferProgressData(ProgressMode.file);
+
+            await Task.Run(() =>
             {
-                CopyFileTo(cFile, distinationDir.directoryPath);
-            }
+                List<CFile> file = dir.subFiles;
+
+                progressData.totalFile = file.Count;
+                progress.Report(progressData);
+
+                for (int i = 0; i < file.Count; i++)
+                {                  
+                    CopyFileTo(file[i], distinationDir.directoryPath, progress);
+                    progressData.fileIndex = i + 1;
+                    progress.Report(progressData);
+                }
+                /*
+                foreach (CFile cFile in dir.subFiles)
+                {
+                    CopyFileTo(cFile, distinationDir.directoryPath, progress);
+                }*/
+            });
 
             foreach (DirectoryTree subDir in dir.subDirectories)
-                await TransferContentTo(subDir, distinationDir);
+                await TransferContentTo(subDir, distinationDir, progress);
         }
 
-        public static CFile CopyFileTo(this CFile file, string distinationPath)
+        public static CFile CopyFileTo(this CFile file, string distinationPath, IProgress<TransferProgressData> progress)
         {
             byte[] buffer = new byte[1024 * 1024]; // 1MB buffer
             bool cancelFlag = false;
 
-            string fileTargetPath = distinationPath + "/" + file.name;
+            TransferProgressData progressData = new TransferProgressData(ProgressMode.transfer);
+
+            string fileTargetPath = distinationPath + "/" + file.title;
 
             using (FileStream source = new FileStream(file.info.filePath, FileMode.Open, FileAccess.Read))
             {
                 long fileLength = source.Length;
+                progressData.size = fileLength;
+
                 using (FileStream dest = new FileStream(fileTargetPath, FileMode.CreateNew, FileAccess.Write))
                 {
                     long totalBytes = 0;
@@ -53,12 +74,18 @@ namespace FileArranger
                     while ((currentBlockSize = source.Read(buffer, 0, buffer.Length)) > 0)
                     {
                         totalBytes += currentBlockSize;
+
+                        progressData.transferRate = currentBlockSize;
+                        progressData.transferedBytes = totalBytes;
+
                         double persentage = (double)totalBytes * 100.0 / fileLength;
 
                         dest.Write(buffer, 0, currentBlockSize);
 
                         cancelFlag = false;
                         //OnProgressChanged(persentage, ref cancelFlag);
+
+                        progress.Report(progressData);
 
                         if (cancelFlag == true)
                         {
@@ -78,9 +105,9 @@ namespace FileArranger
             return createdFile;
         }
 
-        public static CFile CopyFileTo(this CFile file, DirectoryTree distinationDir)
+        public static CFile CopyFileTo(this CFile file, DirectoryTree distinationDir, IProgress<TransferProgressData> progress)
         {
-            return CopyFileTo(file, distinationDir.directoryPath);
+            return CopyFileTo(file, distinationDir.directoryPath, progress);
         }
 
         public static void MoveContentTo(DirectoryTree distinationDir)
