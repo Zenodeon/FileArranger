@@ -48,7 +48,9 @@ namespace FileArranger
 
         private void ShowScanDetails(object sender, ScanProgressData e)
         {
+            DLog.Log("Bug Test Before : " + scanProgressData.directoriesCount);
             scanProgressData += e;
+            DLog.Log("Bug Test After : " + scanProgressData.directoriesCount);
 
             DirCount.Content = "Directory Count : " + scanProgressData.directoriesCount;
             FileCount.Content = "File Count : " + scanProgressData.fileCount;
@@ -57,19 +59,30 @@ namespace FileArranger
             if (e.scanDone)
             {
                 DLog.Log("Scan Done");
+                DLog.Log("Directory Count : " + selectedDir.totalSubDirectoryCount);
+                DLog.Log("File Count : " + selectedDir.totalSubFileCount);
+                DLog.Log("Selected File Count : " + selectedDir.totalSelectedSubFileCount);
             }
         }
 
-        private void ShowTransferDetails(object sender, TransferProgressData e)
+        private TransferProgressData fileTransferProgress;
+
+        private void ShowTransferDetails(object sender, TransferProgressData TD)
         {
-            switch (e.mode)
+            switch (TD.mode)
             {
-                case ProgressMode.file:
-                    Bar1.Value = e.filePercentage;
+                case ProgressMode.fileTransfer:
+                    fileTransferProgress = TD;
+                    //Bar1.Value = TD.fileTransferStaticPercentage;
                     break;
 
-                case ProgressMode.transfer:
-                    Bar2.Value = e.transferPercentage;
+                case ProgressMode.dataTransfer:
+                    return; //needs more time to fix :(
+                    TD = TransferProgressData.CopyFileData(TD, fileTransferProgress);
+
+                    Bar2.Value = TD.dataTransferPercentage;
+                    Bar1.Value = TD.fileTransferPercentage(TD.dataTransferPercentage);
+
                     break;
 
                 default:
@@ -89,9 +102,7 @@ namespace FileArranger
                 {
                     scanProgressData = new ScanProgressData();
 
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    selectedDir.ScanDirectory(true, scanProgress, true);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                    selectedDir.ScanDirectory(true, scanProgress);
                 }
         }
 
@@ -149,7 +160,7 @@ namespace FileArranger
 
         }
 
-        private void TestSiteSetup(object sender, RoutedEventArgs e)
+        private void TestSite1Setup(object sender, RoutedEventArgs e)
         {
             //Site
             selectedDir = new DirectoryTree(@"D:\TestSite\Site1");
@@ -157,6 +168,19 @@ namespace FileArranger
 
             //Dump
             distinationDir = new DirectoryTree(@"D:\TestSite\TestSiteDump\MainDump"); 
+            DLog.Log("Distination Directory : " + distinationDir.directoryPath);
+
+            ScanDirectory();
+        }
+
+        private void TestSite2Setup(object sender, RoutedEventArgs e)
+        {
+            //Site
+            selectedDir = new DirectoryTree(@"D:\TestSite\Site2");
+            DLog.Log("Selected Directory : " + selectedDir.directoryPath);
+
+            //Dump
+            distinationDir = new DirectoryTree(@"D:\TestSite\TestSiteDump\MainDump");
             DLog.Log("Distination Directory : " + distinationDir.directoryPath);
 
             ScanDirectory();

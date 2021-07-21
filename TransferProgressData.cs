@@ -9,27 +9,40 @@ namespace FileArranger
         public ProgressMode mode { get; set; }
 
         //File
-        public int totalFile { get; set; }
+        public int totalFileCount { get; set; }
         public int fileIndex { get; set; }
-        public float filePercentage { get { return totalFile != 0? fileIndex * 100 / totalFile : 0; } }
+        public float fileTransferStaticPercentage{ get { return totalFileCount != 0? fileIndex * 100 / totalFileCount : 0; } }
+
+        public float fileTransferPercentage(float dataTransferPercentage)
+        {
+            return totalFileCount != 0 ? fileIndex * dataTransferPercentage / totalFileCount : 0;
+        }
 
         //Transfer
         public float size { get; set; }
 
-        public float transferedBytes { get; set; }
+        public float bytesTransfered { get; set; }
 
-        public float transferRate { get; set; }
+        public float dataTransferRate { get; set; }
 
-        public float transferPercentage { get { return transferedBytes * 100 / size; } }
+        public float dataTransferPercentage { get { return bytesTransfered * 100 / size; } }
 
         public TransferProgressData(ProgressMode mode)
         {
             this.mode = mode;
         }
+
+        public static TransferProgressData CopyFileData(TransferProgressData a, TransferProgressData b)
+        {
+            a.totalFileCount = b.totalFileCount;
+            a.fileIndex = b.fileIndex;
+
+            return a;
+        }
     }
     public enum ProgressMode
     {
-        transfer,
-        file
+        dataTransfer,
+        fileTransfer
     }
 }

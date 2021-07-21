@@ -10,6 +10,8 @@ namespace FileArranger
 {
     static class DirectoryAction
     {
+        private static TransferProgressData transferProgressData = new TransferProgressData(ProgressMode.fileTransfer);
+
         public static DirectoryTree ShowFolderDialog()
         {
             VistaFolderBrowserDialog fileDialog = new VistaFolderBrowserDialog();
@@ -24,22 +26,34 @@ namespace FileArranger
             return new DirectoryTree(fileDialog.SelectedPath, choosed);
         }
 
-        public static async Task TransferContentTo(this DirectoryTree dir, DirectoryTree distinationDir, IProgress<TransferProgressData> progress)
+        public static async void TransferContentTo(this DirectoryTree dir, DirectoryTree distinationDir, IProgress<TransferProgressData> progress = null)
         {
-            TransferProgressData progressData = new TransferProgressData(ProgressMode.file);
+            await TransferContentTo(dir, distinationDir, progress, true);
+        }
 
+        public static async Task TransferContentTo(this DirectoryTree dir, DirectoryTree distinationDir, IProgress<TransferProgressData> progress, bool startDirectory)
+        {
+            if (startDirectory)
+            {
+                transferProgressData = new TransferProgressData(ProgressMode.fileTransfer);
+                dir.ScanDirectory(true);
+            }
+           
             await Task.Run(() =>
             {
-                List<CFile> file = dir.subFiles;
+                if (startDirectory)
+                {
+                    transferProgressData.totalFileCount = dir.totalSelectedSubFileCount;
+                    transferProgressData.fileIndex = 0;
+                }
 
-                progressData.totalFile = file.Count;
-                progress.Report(progressData);
+                List<CFile> file = dir.selectedSubFiles;
 
                 for (int i = 0; i < file.Count; i++)
-                {                  
+                {
                     CopyFileTo(file[i], distinationDir.directoryPath, progress);
-                    progressData.fileIndex = i + 1;
-                    progress.Report(progressData);
+                    transferProgressData.fileIndex++;
+                    progress.Report(transferProgressData);
                 }
                 /*
                 foreach (CFile cFile in dir.subFiles)
@@ -49,15 +63,15 @@ namespace FileArranger
             });
 
             foreach (DirectoryTree subDir in dir.subDirectories)
-                await TransferContentTo(subDir, distinationDir, progress);
+                await TransferContentTo(subDir, distinationDir, progress, false);
         }
 
         public static CFile CopyFileTo(this CFile file, string distinationPath, IProgress<TransferProgressData> progress)
         {
             byte[] buffer = new byte[1024 * 1024]; // 1MB buffer
             bool cancelFlag = false;
-
-            TransferProgressData progressData = new TransferProgressData(ProgressMode.transfer);
+            
+            TransferProgressData progressData = new TransferProgressData(ProgressMode.dataTransfer);
 
             string fileTargetPath = distinationPath + "/" + file.title;
 
@@ -75,8 +89,8 @@ namespace FileArranger
                     {
                         totalBytes += currentBlockSize;
 
-                        progressData.transferRate = currentBlockSize;
-                        progressData.transferedBytes = totalBytes;
+                        progressData.dataTransferRate = currentBlockSize;
+                        progressData.bytesTransfered = totalBytes;
 
                         double persentage = (double)totalBytes * 100.0 / fileLength;
 

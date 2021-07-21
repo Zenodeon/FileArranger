@@ -14,7 +14,7 @@ namespace FileArranger
 
         public bool scanDone { get; set; } = false;
 
-        public static ScanProgressData operator+(ScanProgressData a, ScanProgressData b)
+        public static ScanProgressData operator +(ScanProgressData a, ScanProgressData b)
         {
             a.directoriesCount += b.directoriesCount;
             a.fileCount += b.fileCount;

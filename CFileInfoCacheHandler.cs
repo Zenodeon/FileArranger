@@ -17,12 +17,12 @@ namespace FileArranger
 
         public static void AddMediaInfo(JObject mediaInfo)
         {   
-            mediaInfoCache.Add(mediaInfo);
+            //mediaInfoCache.Add(mediaInfo);
         }
 
         public static void ClearMemoryCache()
         {
-            mediaInfoCache.Clear();
+            //mediaInfoCache.Clear();
         }
 
         public static void SaveCache()

@@ -15,9 +15,48 @@ namespace FileArranger
 
         public bool vaild { get; private set; }
 
+        ScanProgressData scanInfo = new ScanProgressData();
+
         public List<DirectoryTree> subDirectories = new List<DirectoryTree>();
 
         public List<CFile> subFiles = new List<CFile>();
+        public List<CFile> selectedSubFiles = new List<CFile>();
+
+        public int totalSubDirectoryCount
+        {
+            get
+            {
+                int count = subDirectories.Count;
+                foreach (DirectoryTree directory in subDirectories)
+                    count += directory.totalSubDirectoryCount;
+
+                return count;
+            }
+        }
+
+        public int totalSubFileCount
+        {
+            get
+            {
+                int count = subFiles.Count;
+                foreach (DirectoryTree directory in subDirectories)
+                    count += directory.totalSubFileCount;
+
+                return count;
+            }
+        }
+
+        public int totalSelectedSubFileCount
+        {
+            get
+            {
+                int count = selectedSubFiles.Count;
+                foreach (DirectoryTree directory in subDirectories)
+                    count += directory.totalSelectedSubFileCount;
+
+                return count;
+            }
+        }
 
         public DirectoryTree(string directoryPath, bool vaild = true)
         {
@@ -25,47 +64,56 @@ namespace FileArranger
             this.vaild = vaild;
         }
 
-        public async Task ScanDirectory(bool scanSubDirectories, IProgress<ScanProgressData> progress, bool startDirectory = false)
+        public async void ScanDirectory(bool scanSubDirectories, IProgress<ScanProgressData> progress = null)
         {
-            ScanProgressData scanData = new ScanProgressData();
+            await ScanDirectory(scanSubDirectories, progress, true);
+        }
 
+        public async Task ScanDirectory(bool scanSubDirectories, IProgress<ScanProgressData> progress, bool startDirectory)
+        {
+            /*
             if (startDirectory)
                 CFileInfoCacheHandler.ClearMemoryCache();
+            */
 
             await Task.Run(() =>
             {
                 subDirectories = GetDirectories();
-                scanData.directoriesCount += subDirectories.Count;
+                scanInfo.directoriesCount = subDirectories.Count;
 
                 List<string> filesLoc = Directory.GetFiles(directoryPath).ToList();
-                scanData.fileCount += filesLoc.Count;
+                scanInfo.fileCount = filesLoc.Count;
+
+                //File Filter [temp]
+                selectedSubFiles.Clear();
 
                 foreach (string filePath in filesLoc)
                 {
                     CFile file = new CFile(filePath);
+                    subFiles.Add(file);
 
                     if (file.info.extension != ".json")
                     {
-                        subFiles.Add(file);
-                        CFileInfoCacheHandler.AddMediaInfo(file.info.MakeCache());      
+                        selectedSubFiles.Add(file);
+                        //CFileInfoCacheHandler.AddMediaInfo(file.info.MakeCache());
                     }
                 } 
             });
 
             foreach (DirectoryTree directory in subDirectories)
-                await directory.ScanDirectory(scanSubDirectories, progress);
+                await directory.ScanDirectory(scanSubDirectories, progress, false);
 
-            scanData.selectedFileCount += subFiles.Count;
-
-            progress.Report(scanData);
+            scanInfo.selectedFileCount = selectedSubFiles.Count;
 
             if (startDirectory)
             {
-                CFileInfoCacheHandler.SaveCache();
+                //CFileInfoCacheHandler.SaveCache();
 
-                scanData.scanDone = true;
-                progress.Report(scanData);
+                scanInfo.scanDone = true;
             }
+
+            if (progress != null)
+                progress.Report(scanInfo);
         }
 
         private List<DirectoryTree> GetDirectories()
