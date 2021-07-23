@@ -65,29 +65,10 @@ namespace FileArranger
             }
         }
 
-        private TransferProgressData fileTransferProgress;
-
         private void ShowTransferDetails(object sender, TransferProgressData TD)
         {
-            switch (TD.mode)
-            {
-                case ProgressMode.fileTransfer:
-                    fileTransferProgress = TD;
-                    //Bar1.Value = TD.fileTransferStaticPercentage;
-                    break;
-
-                case ProgressMode.dataTransfer:
-                    return; //needs more time to fix :(
-                    TD = TransferProgressData.CopyFileData(TD, fileTransferProgress);
-
-                    Bar2.Value = TD.dataTransferPercentage;
-                    Bar1.Value = TD.fileTransferPercentage(TD.dataTransferPercentage);
-
-                    break;
-
-                default:
-                    break;
-            }
+            Bar2.Value = TD.dataTransferPercentage;
+            Bar1.Value = TD.fileTransferPercentage;
         }
 
         private void ScanDirectory(object sender, RoutedEventArgs e)

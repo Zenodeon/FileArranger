@@ -6,17 +6,14 @@ namespace FileArranger
 {
     public class TransferProgressData
     {
-        public ProgressMode mode { get; set; }
+        public IProgress<TransferProgressData> receiver { private get; set; }
 
         //File
         public int totalFileCount { get; set; }
         public int fileIndex { get; set; }
-        public float fileTransferStaticPercentage{ get { return totalFileCount != 0? fileIndex * 100 / totalFileCount : 0; } }
+        public float fileTransferStaticPercentage { get { return totalFileCount != 0 ? ++fileIndex * 100 / totalFileCount : 0; } }
 
-        public float fileTransferPercentage(float dataTransferPercentage)
-        {
-            return totalFileCount != 0 ? fileIndex * dataTransferPercentage / totalFileCount : 0;
-        }
+        public float fileTransferPercentage { get { return totalFileCount != 0 ? fileIndex * dataTransferPercentage / totalFileCount : 0; } }
 
         //Transfer
         public float size { get; set; }
@@ -27,17 +24,14 @@ namespace FileArranger
 
         public float dataTransferPercentage { get { return bytesTransfered * 100 / size; } }
 
-        public TransferProgressData(ProgressMode mode)
+        public TransferProgressData(IProgress<TransferProgressData> receiver)
         {
-            this.mode = mode;
+            this.receiver = receiver;
         }
 
-        public static TransferProgressData CopyFileData(TransferProgressData a, TransferProgressData b)
+        public void Report()
         {
-            a.totalFileCount = b.totalFileCount;
-            a.fileIndex = b.fileIndex;
-
-            return a;
+            receiver.Report(this);
         }
     }
     public enum ProgressMode

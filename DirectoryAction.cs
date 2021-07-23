@@ -10,7 +10,7 @@ namespace FileArranger
 {
     static class DirectoryAction
     {
-        private static TransferProgressData transferProgressData = new TransferProgressData(ProgressMode.fileTransfer);
+        private static TransferProgressData transferProgressData;
 
         public static DirectoryTree ShowFolderDialog()
         {
@@ -35,7 +35,7 @@ namespace FileArranger
         {
             if (startDirectory)
             {
-                transferProgressData = new TransferProgressData(ProgressMode.fileTransfer);
+                transferProgressData = new TransferProgressData(progress);
                 dir.ScanDirectory(true);
             }
            
@@ -51,29 +51,24 @@ namespace FileArranger
 
                 for (int i = 0; i < file.Count; i++)
                 {
-                    CopyFileTo(file[i], distinationDir.directoryPath, progress);
-                    transferProgressData.fileIndex++;
-                    progress.Report(transferProgressData);
+                    CopyFileTo(file[i], distinationDir.directoryPath, ref transferProgressData);
                 }
-                /*
-                foreach (CFile cFile in dir.subFiles)
-                {
-                    CopyFileTo(cFile, distinationDir.directoryPath, progress);
-                }*/
             });
 
             foreach (DirectoryTree subDir in dir.subDirectories)
                 await TransferContentTo(subDir, distinationDir, progress, false);
         }
 
-        public static CFile CopyFileTo(this CFile file, string distinationPath, IProgress<TransferProgressData> progress)
+        public static CFile CopyFileTo(this CFile file, string distinationPath, ref TransferProgressData progressData)
         {
             byte[] buffer = new byte[1024 * 1024]; // 1MB buffer
             bool cancelFlag = false;
-            
-            TransferProgressData progressData = new TransferProgressData(ProgressMode.dataTransfer);
 
             string fileTargetPath = distinationPath + "/" + file.title;
+
+            DLog.Log("File Index : " + transferProgressData.fileIndex);
+
+            transferProgressData.fileIndex++;
 
             using (FileStream source = new FileStream(file.info.filePath, FileMode.Open, FileAccess.Read))
             {
@@ -97,9 +92,8 @@ namespace FileArranger
                         dest.Write(buffer, 0, currentBlockSize);
 
                         cancelFlag = false;
-                        //OnProgressChanged(persentage, ref cancelFlag);
 
-                        progress.Report(progressData);
+                        progressData.Report();
 
                         if (cancelFlag == true)
                         {
@@ -114,14 +108,14 @@ namespace FileArranger
 
             createdFile.CopyInfo(file);
 
-            DLog.Log("Created File : " + createdFile.info.filePath);
+            //DLog.Log("Created File : " + createdFile.info.filePath);
 
             return createdFile;
         }
 
-        public static CFile CopyFileTo(this CFile file, DirectoryTree distinationDir, IProgress<TransferProgressData> progress)
+        public static CFile CopyFileTo(this CFile file, DirectoryTree distinationDir, ref TransferProgressData progressData)
         {
-            return CopyFileTo(file, distinationDir.directoryPath, progress);
+            return CopyFileTo(file, distinationDir.directoryPath, ref progressData);
         }
 
         public static void MoveContentTo(DirectoryTree distinationDir)
