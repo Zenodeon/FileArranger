@@ -151,6 +151,8 @@ namespace FileArranger
             distinationDir = new DirectoryTree(@"D:\TestSite\TestSiteDump\MainDump"); 
             DLog.Log("Distination Directory : " + distinationDir.directoryPath);
 
+            distinationDir.DeleteContent();
+
             ScanDirectory();
         }
 
@@ -163,6 +165,8 @@ namespace FileArranger
             //Dump
             distinationDir = new DirectoryTree(@"D:\TestSite\TestSiteDump\MainDump");
             DLog.Log("Distination Directory : " + distinationDir.directoryPath);
+
+            distinationDir.DeleteContent();
 
             ScanDirectory();
         }

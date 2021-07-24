@@ -33,7 +33,6 @@ namespace FileArranger
                 return count;
             }
         }
-
         public int totalSubFileCount
         {
             get
@@ -45,7 +44,6 @@ namespace FileArranger
                 return count;
             }
         }
-
         public int totalSelectedSubFileCount
         {
             get
@@ -126,6 +124,25 @@ namespace FileArranger
                 directoryList.Add(new DirectoryTree(directoryPath)) ;
 
             return directoryList;
+        }
+
+        public void Delete()
+        {
+            //Directory.Delete(directoryPath);
+        }
+
+        public void DeleteContent()
+        {
+            DirectoryInfo di = new DirectoryInfo(directoryPath);
+
+            foreach (FileInfo file in di.EnumerateFiles())
+            {
+                file.Delete();
+            }
+            foreach (DirectoryInfo dir in di.EnumerateDirectories())
+            {
+                dir.Delete(true);
+            }          
         }
     }
 }
